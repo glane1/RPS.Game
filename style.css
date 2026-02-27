@@ -48,6 +48,47 @@ body.match-point-active {
   margin: 10px auto;
 }
 
+/* Difficulty Selector */
+.difficulty-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 15px;
+}
+
+.difficulty-label {
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.difficulty-btn {
+  padding: 8px 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: transparent;
+  color: white;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.difficulty-btn:hover {
+  border-color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.difficulty-btn.active {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: #ffd166;
+  color: #ffd166;
+  box-shadow: 0 0 10px rgba(255, 209, 102, 0.3);
+}
+
 /* Choice Buttons: Square and responsive */
 .choices {
   display: flex;
@@ -146,7 +187,7 @@ body.match-point-active {
   backdrop-filter: blur(15px);
   border: 1px solid var(--glass-border);
   border-radius: 30px;
-  padding: clamp(15px, 5vw, 40px);
+  padding: clamp(15px, 3vw, 25px);
   width: 92%;
   max-width: 450px;
   text-align: center;
@@ -170,15 +211,18 @@ body.match-point-active {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+  gap: 15px;
 }
 
 .header-controls {
-  position: absolute;
-  right: 0;
-  top: 0;
   display: flex;
   gap: 8px;
   align-items: center;
+  order: -1;
+  width: 100%;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .help-toggle,
@@ -239,29 +283,29 @@ body.match-point-active {
 
 .display-box {
   background: rgba(0, 0, 0, 0.2);
-  padding: 10px;
+  padding: 8px;
   border-radius: 10px;
-  margin: 5px 0;
+  margin: 3px 0;
   font-size: 0.9rem;
 }
 
 .result {
   font-size: clamp(1.8rem, 8vw, 2.5rem);
   font-weight: 900;
-  min-height: 60px;
-  margin: 10px 0;
+  min-height: 40px;
+  margin: 6px 0;
 }
 
 .score-board {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 15px;
-  margin-top: 20px;
+  gap: 12px;
+  margin-top: 12px;
 }
 
 .score-card {
   background: rgba(255, 255, 255, 0.05);
-  padding: 10px;
+  padding: 8px;
   border-radius: 15px;
 }
 
@@ -605,7 +649,15 @@ body.match-point-active {
   h1 { font-size: 1.5rem; }
   .display-box { font-size: 1rem; }
   .header-controls { gap: 5px; }
-  #userGreeting { display: none; } /* Hide name on tiny screens to save space */
+  #userGreeting { 
+    font-size: 0.75rem;
+    opacity: 0.85;
+  }
+  #adminLink { 
+    padding: 6px 10px; 
+    font-size: 0.75rem;
+    margin: 0 2px;
+  }
 }
 
 #logoutBtn {
@@ -618,6 +670,11 @@ body.match-point-active {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+#adminLink {
+    white-space: nowrap;
+    font-size: 0.9rem;
 }
 
 #logoutBtn:hover {
@@ -642,11 +699,26 @@ body.match-point-active {
 /* Update your .header class */
 .header {
   display: flex;
-  flex-direction: column; /* Stacks title and icons vertically on small screens */
+  flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
   margin-bottom: 20px;
   width: 100%;
+  justify-content: center;
+  position: relative;
+}
+
+.header h1 {
+  width: 100%;
+  text-align: center;
+  margin: 0;
+  order: 1;
+}
+
+#userGreeting {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  white-space: nowrap;
 }
 
 /* Adjust the icons container */
@@ -654,16 +726,26 @@ body.match-point-active {
   display: flex;
   justify-content: center;
   gap: 15px;
+  align-items: center;
   width: 100%;
+  flex-wrap: wrap;
+  order: -1;
 }
 
-/* On slightly larger phones, let them sit side-by-side again */
-@media (min-width: 400px) {
+/* On slightly larger phones, keep buttons on top */
+@media (min-width: 500px) {
   .header {
-    flex-direction: row;
-    justify-content: space-between;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .header h1 {
+    text-align: center;
+    order: 1;
   }
   .header-controls {
-    width: auto;
+    width: 100%;
+    justify-content: center;
+    order: -1;
   }
 }
