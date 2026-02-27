@@ -33,6 +33,13 @@
       </div>
     </div>
 
+    <div class="difficulty-selector">
+      <span class="difficulty-label">Mode:</span>
+      <button class="difficulty-btn" data-difficulty="normal" onclick="setDifficulty('normal')">Normal</button>
+      <button class="difficulty-btn" data-difficulty="moderate" onclick="setDifficulty('moderate')">Moderate</button>
+      <button class="difficulty-btn" data-difficulty="hard" onclick="setDifficulty('hard')">Hard</button>
+    </div>
+
     <div class="choices">
       <button class="choice-btn" data-choice="rock" onclick="playGame('rock')">👊</button>
       <button class="choice-btn" data-choice="paper" onclick="playGame('paper')">🖐</button>
@@ -68,6 +75,7 @@
           <li>🖐 Paper beats Rock</li>
           <li>✌️ Scissors beats Paper</li>
         </ul>
+        <p style="margin-top: 15px; font-size: 0.95rem;"><strong>Win Condition:</strong> First player to score 5 points wins the round!</p>
         <button class="close-btn" onclick="closeHelp()">GOT IT!</button>
       </div>
     </div>
