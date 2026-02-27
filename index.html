@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5.0">
+    <meta name="theme-color" content="#667eea">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>regis/login portal</title>
+    <link rel="stylesheet" href="login.css">
+    <script type="module" src="firebase-init.js"></script>
+</head>
+
+<body>
+
+    <div class="theme-toggle" onclick="toggleTheme()">🌓 Theme</div>
+
+    <!-- moved welcome header out of card-container to avoid stacking/visibility issues -->
+    <div class="welcome-header">
+        <h1>🪨 📄 ✂️</h1>
+        <h2 class="game-title">Bato-Bato Pick Arena</h2>
+        <p>The ultimate online Rock-Paper-Scissors challenge!</p>
+    </div>
+
+    <div class="card-container">
+        <div class="card active" id="register-section">
+            <h2>Join Us</h2>
+            <p class="subtitle">Create your account to start</p>
+            <p class="toggle-link">Already a member? <span onclick="navToLogin()">Log in</span></p>
+
+            <div class="input-group">
+                <label for="reg-user">Username</label>
+                <input type="text" id="reg-user" placeholder="Enter username" autocomplete="off">
+            </div>
+
+            <div class="input-group">
+                <label for="reg-pass">Password</label>
+                <input type="password" id="reg-pass" placeholder="Enter password">
+                <label class="show-pass-wrapper">
+                    <input type="checkbox" id="check-reg" onclick="togglePassword('reg-pass', this)">
+                    <span>Show Password</span>
+                </label>
+            </div>
+            <button type="button" id="reg-btn" disabled>Sign Up</button>
+        </div>
+
+        <div class="card inactive" id="login-section">
+            <h2>Welcome Back</h2>
+            <p class="subtitle">Log in to your account</p>
+            <p class="toggle-link">Don't have an account? <span onclick="navToRegister()">Register</span></p>
+
+            <div class="input-group">
+                <label for="login-user">Username</label>
+                <input type="text" id="login-user" placeholder="Username" autocomplete="off">
+            </div>
+
+            <div class="input-group">
+                <label for="login-pass">Password</label>
+                <input type="password" id="login-pass" placeholder="Password">
+                <label class="show-pass-wrapper">
+                    <input type="checkbox" id="check-login" onclick="togglePassword('login-pass', this)">
+                    <span>Show Password</span>
+                </label>
+            </div>
+            <button type="button" id="login-btn">Login</button>
+        </div>
+
+        <div id="content-page" class="card inactive">
+            <div class="profile-circle" id="user-initial">?</div>
+            <h2 id="welcome-msg">Ready for Battle?</h2>
+            <p class="subtitle">Your stats are being tracked in the arena.</p>
+
+            <button type="button" onclick="showContentPage()" style="background:#2ecc71;margin-bottom:10px;">ENTER THE ARENA</button>
+            <button type="button" onclick="logout()" style="background:transparent;color:#ff4757;border:1px solid #ff4757;">Log Out</button>
+        </div>
+    </div>
+
+    <script type="module" src="login.js"></script>
+
+    <script>
+        function showContentPage() {
+            const login = document.getElementById('login-section');
+            const content = document.getElementById('content-page');
+            if (login && content) {
+                login.classList.replace('active', 'inactive');
+                content.classList.replace('inactive', 'active');
+            }
+        }
+        window.showContentPage = showContentPage;
+    </script>
+</body>
+
+</html>

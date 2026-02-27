@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal - Bato-Bato Pick</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+            /* Reduced padding for mobile */
+            color: #333;
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+
+            /* FLEXBOX MAGIC */
+            display: flex;
+            justify-content: space-between;
+            /* Pushes Title to left, Buttons to right */
+            align-items: center;
+            /* Vertically centers everything */
+            flex-wrap: wrap;
+            /* Allows buttons to move below title on small phones */
+            gap: 15px;
+            /* Adds space between items when they wrap */
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .play-btn {
+            background: #48bb78;
+            /* Green color */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+
+        .play-btn:hover {
+            background: #38a169;
+        }
+
+        .logout-btn {
+            background: #f56565;
+            /* Red color */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Make buttons look good on mobile */
+        .play-btn,
+        .logout-btn {
+            white-space: nowrap;
+            /* Prevents text inside buttons from breaking */
+            padding: 10px 18px;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        /* MOBILE SPECIFIC TWEAK */
+        @media (max-width: 480px) {
+            .admin-header {
+                justify-content: center;
+                /* Centers everything on tiny screens */
+                text-align: center;
+            }
+
+            .header-actions {
+                width: 100%;
+                /* Buttons take full width */
+                justify-content: center;
+                /* Centers buttons side-by-side */
+            }
+
+            .admin-header h1 {
+                font-size: 1.5rem;
+                /* Shrinks title slightly for mobile */
+            }
+        }
+
+
+
+
+        .admin-content {
+            padding: 15px;
+            /* Reduced padding for mobile */
+        }
+
+        /* Stats Row - Responsive Grid */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        /* Search Bar Responsive */
+        .search-bar {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            min-width: 0;
+            /* Prevents input from overflowing */
+        }
+
+        .search-bar button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .search-bar button:hover {
+            background: #5568d3;
+        }
+
+        /* TABLE RESPONSIVENESS */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            /* Enables horizontal scroll for small screens */
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+            /* Ensures table doesn't get too squished */
+        }
+
+        .users-table th,
+        .users-table td {
+            padding: 12px 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            font-size: 0.9rem;
+        }
+
+        .users-table tr:hover {
+            background: #f9f9f9;
+        }
+
+        .user-row {
+            cursor: pointer;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            margin: 2px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .view-btn {
+            background: #4d96ff;
+            color: white;
+        }
+
+        .view-btn:hover {
+            background: #3d7ae6;
+        }
+
+        .delete-btn {
+            background: #ff4757;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #ff3838;
+        }
+
+        /* Modal Responsiveness */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            /* Centers the white box */
+            align-items: center;
+            /* Centers the white box */
+        }
+
+        .close-modal {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #aaa;
+        }
+
+        .close-modal:hover {
+            color: #000;
+        }
+
+        /* Media Queries for Desktop */
+        @media (min-width: 768px) {
+            body {
+                padding: 20px;
+            }
+
+            .admin-header h1 {
+                font-size: 2rem;
+            }
+
+            .admin-content {
+                padding: 30px;
+            }
+
+            .stat-card .number {
+                font-size: 2.5rem;
+            }
+
+            .admin-header {
+                padding: 30px;
+            }
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 15px;
+        }
+
+        .modal-header h2 {
+            color: #333;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .user-detail {
+            margin: 15px 0;
+        }
+
+        .user-detail label {
+            display: block;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .user-detail value {
+            display: block;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 6px;
+            color: #333;
+        }
+
+        .match-history {
+            margin-top: 20px;
+            border-top: 2px solid #ddd;
+            padding-top: 15px;
+        }
+
+        .match-history h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .match-item {
+            padding: 10px;
+            background: #f9f9f9;
+            border-left: 4px solid #667eea;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+
+        .match-item .result {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .match-item .result.loss {
+            color: #ff4757;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .success-message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+    <script type="module" src="firebase-init.js"></script>
+</head>
+
+<body>
+    <div class="admin-container">
+        <header class="admin-header">
+            <h1>Admin Portal</h1>
+            <div class="header-actions">
+                <a href="game.html" class="play-btn">🎮 Play Game</a>
+                <button onclick="logout()" class="logout-btn">Logout</button>
+            </div>
+        </header>
+
+        <div class="admin-content">
+            <div id="errorMessage"></div>
+            <div id="successMessage"></div>
+
+            <div class="stats-row">
+                <div class="stat-card">
+                    <h3>Total Users</h3>
+                    <div class="number" id="totalUsers">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Active Users</h3>
+                    <div class="number" id="activeUsers">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Matches</h3>
+                    <div class="number" id="totalMatches">0</div>
+                </div>
+            </div>
+
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search by username or email...">
+                <button onclick="searchUsers()">Search</button>
+            </div>
+
+            <div class="table-container">
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Total Wins</th>
+                            <th>Matches Played</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr>
+                            <td colspan="5" class="loading">Loading users...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Details Modal -->
+    <div id="userModal" class="modal" onclick="handleOutsideClick(event)">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <div id="modalUserDetails">
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { getFirestore, collection, getDocs, doc, getDoc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+        const db = window.db;
+        const auth = window.auth;
+
+        let allUsers = [];
+
+        // Check if user is admin (wait for auth to initialize)
+        function checkAdminAccess() {
+            onAuthStateChanged(auth, async (user) => {
+                if (!user) {
+                    window.location.href = 'index.html';
+                    return;
+                }
+
+                try {
+                    const userDoc = await getDoc(doc(db, "players", user.uid));
+                    if (!userDoc.exists() || userDoc.data().role !== 'admin') {
+                        alert('Access Denied: Admin role required');
+                        window.location.href = 'game.html';
+                        return;
+                    }
+
+                    // User is admin — load users and start refresh interval
+                    await loadUsers();
+                    setInterval(loadUsers, 30000);
+                } catch (err) {
+                    showError('Failed to verify admin: ' + err.message);
+                }
+            });
+        }
+
+        // Load all users and stats
+        async function loadUsers() {
+            try {
+                const usersRef = collection(db, "players");
+                const snapshot = await getDocs(usersRef);
+
+                allUsers = [];
+                let totalMatches = 0;
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    allUsers.push({
+                        uid: doc.id,
+                        username: data.username || 'Unknown',
+                        email: data.email || 'N/A',
+                        totalArenaWins: data.totalArenaWins || 0,
+                        matchesPlayed: data.matchesPlayed || 0,
+                        matchHistory: data.matchHistory || [],
+                        role: data.role || 'player'
+                    });
+                    totalMatches += (data.matchHistory || []).length;
+                });
+
+                updateStats(totalMatches);
+                displayUsers(allUsers);
+            } catch (error) {
+                showError('Failed to load users: ' + error.message);
+            }
+        }
+
+        function updateStats(totalMatches) {
+            document.getElementById('totalUsers').textContent = allUsers.length;
+            document.getElementById('activeUsers').textContent = allUsers.length;
+            document.getElementById('totalMatches').textContent = totalMatches;
+        }
+
+        function displayUsers(users) {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="loading">No users found</td></tr>';
+                return;
+            }
+
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                row.className = 'user-row';
+                row.innerHTML = `
+                    <td>${user.username}</td>
+                    <td>${user.email}</td>
+                    <td><strong>${user.totalArenaWins}</strong></td>
+                    <td>${user.matchHistory.length}</td>
+                    <td>
+                        <button class="action-btn view-btn" onclick="viewUserDetails('${user.uid}')">View</button>
+                        <button class="action-btn delete-btn" onclick="deleteUser('${user.uid}', '${user.username}')">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Add "window." before the function name to make it globally accessible
+        window.viewUserDetails = async function (uid) {
+            const modal = document.getElementById('userModal');
+            const detailsContainer = document.getElementById('modalUserDetails');
+
+            // Show the modal
+            modal.style.display = 'flex';
+            detailsContainer.innerHTML = '<p>Loading details...</p>';
+
+            try {
+                // Correcting the path to your "players" collection
+                const userDoc = await getDoc(doc(db, "players", uid));
+
+                if (userDoc.exists()) {
+                    const data = userDoc.data();
+                    detailsContainer.innerHTML = `
+                <div style="color: #333;">
+                    <h2 style="margin-bottom: 15px; color: #667eea;">User Profile</h2>
+                    <p><strong>Username:</strong> ${data.username || 'N/A'}</p>
+                    <p><strong>Email:</strong> ${data.email}</p>
+                    <p><strong>Total Wins:</strong> ${data.totalArenaWins || 0}</p>
+                    <p><strong>Matches Played:</strong> ${data.matchesPlayed || 0}</p>
+                    <p><strong>Join Date:</strong> ${data.joinDate ? new Date(data.joinDate).toLocaleDateString() : 'N/A'}</p>
+                </div>
+            `;
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                detailsContainer.innerHTML = '<p style="color:red">Error loading user data.</p>';
+            }
+        };
+
+        // Paste this inside your <script type="module"> section
+        window.handleOutsideClick = function (event) {
+            const modal = document.getElementById('userModal');
+            // If the user clicked the dark background (the modal div) 
+            // and NOT the white content box inside it, close it.
+            if (event.target === modal) {
+                window.closeModal();
+            }
+        };
+
+        // Also do this for closeModal so the 'X' button works!
+        window.closeModal = function () {
+            document.getElementById('userModal').style.display = 'none';
+        };
+
+        window.deleteUser = async function (uid, username) {
+            if (!confirm(`Are you sure you want to delete ${username}? This action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                await deleteDoc(doc(db, "players", uid));
+                showSuccess(`User "${username}" has been deleted`);
+                loadUsers();
+            } catch (error) {
+                showError('Failed to delete user: ' + error.message);
+            }
+        };
+
+        window.searchUsers = function () {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allUsers.filter(user =>
+                user.username.toLowerCase().includes(query) ||
+                user.email.toLowerCase().includes(query)
+            );
+            displayUsers(filtered);
+        };
+
+        window.logout = function () {
+            auth.signOut().then(() => {
+                window.location.href = 'index.html';
+            });
+        };
+
+        function showError(message) {
+            const el = document.getElementById('errorMessage');
+            el.innerHTML = `<div class="error-message">${message}</div>`;
+            setTimeout(() => el.innerHTML = '', 5000);
+        }
+
+        function showSuccess(message) {
+            const el = document.getElementById('successMessage');
+            el.innerHTML = `<div class="success-message">${message}</div>`;
+            setTimeout(() => el.innerHTML = '', 3000);
+        }
+
+        // Initialize
+        checkAdminAccess();
+    </script>
+</body>
+
+</html>
