@@ -580,6 +580,13 @@
 
                 if (userDoc.exists()) {
                     const data = userDoc.data();
+                    
+                    // Calculate wins by difficulty
+                    const matchHistory = data.matchHistory || [];
+                    const normalWins = matchHistory.filter(m => m.result === 'WIN' && m.difficulty === 'normal').length;
+                    const moderateWins = matchHistory.filter(m => m.result === 'WIN' && m.difficulty === 'moderate').length;
+                    const hardWins = matchHistory.filter(m => m.result === 'WIN' && m.difficulty === 'hard').length;
+                    
                     detailsContainer.innerHTML = `
                 <div style="color: #333;">
                     <h2 style="margin-bottom: 15px; color: #667eea;">User Profile</h2>
@@ -588,6 +595,13 @@
                     <p><strong>Total Wins:</strong> ${data.totalArenaWins || 0}</p>
                     <p><strong>Matches Played:</strong> ${data.matchesPlayed || 0}</p>
                     <p><strong>Join Date:</strong> ${data.joinDate ? new Date(data.joinDate).toLocaleDateString() : 'N/A'}</p>
+                    
+                    <div style="margin-top: 20px; padding-top: 15px; border-top: 2px solid #ddd;">
+                        <h3 style="color: #667eea; margin-bottom: 10px;">Wins by Difficulty</h3>
+                        <p><strong>🟢 Normal Mode:</strong> ${normalWins} wins</p>
+                        <p><strong>🟡 Moderate Mode:</strong> ${moderateWins} wins</p>
+                        <p><strong>🔴 Hard Mode:</strong> ${hardWins} wins</p>
+                    </div>
                 </div>
             `;
                 }
