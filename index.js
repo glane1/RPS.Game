@@ -5,6 +5,13 @@ let currentUserRef = null;
 
 onAuthStateChanged(window.auth, (user) => {
     if (user) {
+        // Set the user greeting with user's name or email
+        const userGreetingEl = document.getElementById('userGreeting');
+        if (userGreetingEl) {
+            const displayName = user.displayName || user.email.split('@')[0];
+            userGreetingEl.textContent = `Hi, ${displayName}`;
+        }
+        
         // We create a reference to the player's specific document in the database
         currentUserRef = doc(window.db, "players", user.uid);
         
@@ -13,7 +20,7 @@ onAuthStateChanged(window.auth, (user) => {
         onSnapshot(currentUserRef, (docSnap) => {
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                totalWinsDisplay.textContent = `Legendary Wins: ${data.totalArenaWins || 0}`;
+                updateTotalWinsDisplay(data);
                 
                 // Show admin link if user is admin
                 if (data.role === 'admin') {
@@ -60,11 +67,83 @@ let playerScore = 0;
 let computerScore = 0;
 let winStreak = 0;
 let isGameOver = false;
+let currentDifficulty = 'normal'; // Default difficulty mode
+
+// Mode-specific game state storage
+let modeState = {
+  normal: { playerScore: 0, computerScore: 0, winStreak: 0, isGameOver: false },
+  moderate: { playerScore: 0, computerScore: 0, winStreak: 0, isGameOver: false },
+  hard: { playerScore: 0, computerScore: 0, winStreak: 0, isGameOver: false }
+};
 
 // Local Persistence
 let soundEnabled = localStorage.getItem('rps_sound') === 'true';
 totalWinsDisplay.textContent = `Legendary Wins: 0`;
 soundToggle.setAttribute('aria-pressed', String(!!soundEnabled));
+
+// --- MODE STATE PERSISTENCE FUNCTIONS ---
+
+// Load mode states from localStorage
+function loadModeStatesFromStorage() {
+  const saved = localStorage.getItem('rps_modeStates');
+  if (saved) {
+    try {
+      modeState = JSON.parse(saved);
+    } catch (e) {
+      console.error('Error loading mode states:', e);
+    }
+  }
+}
+
+// Save mode states to localStorage
+function saveModeStatesToStorage() {
+  localStorage.setItem('rps_modeStates', JSON.stringify(modeState));
+}
+
+// Save current mode state before switching
+function saveModeState() {
+  modeState[currentDifficulty] = {
+    playerScore,
+    computerScore,
+    winStreak,
+    isGameOver
+  };
+  saveModeStatesToStorage();
+}
+
+// Load mode state after switching
+function loadModeState(mode) {
+  const state = modeState[mode] || { playerScore: 0, computerScore: 0, winStreak: 0, isGameOver: false };
+  playerScore = state.playerScore;
+  computerScore = state.computerScore;
+  winStreak = state.winStreak;
+  isGameOver = state.isGameOver;
+  
+  // Update DOM
+  playerScoreDisplay.textContent = playerScore;
+  computerScoreDisplay.textContent = computerScore;
+  updateStreakUI();
+  
+  // Clear game display if not game over
+  if (!isGameOver) {
+    resultDisplay.textContent = '';
+    matchStatus.textContent = '';
+    playerDisplay.textContent = 'PLAYER: —';
+    computerDisplay.textContent = 'COMPUTER: —';
+    resetBtn.style.display = 'none';
+    toggleButtons(false);
+  } else {
+    resetBtn.style.display = 'block';
+    toggleButtons(true);
+  }
+}
+
+// Initialize difficulty button
+document.addEventListener('DOMContentLoaded', () => {
+  loadModeStatesFromStorage();
+  loadModeState(currentDifficulty);
+  updateDifficultyUI();
+});
 
 
 // --- MODAL CONTROL FUNCTIONS ---
@@ -84,6 +163,72 @@ window.closeHelp = function() {
     releaseFocus();
   }
 };
+
+// --- DIFFICULTY MODE FUNCTIONS ---
+
+window.setDifficulty = function(mode) {
+  saveModeState(); // Save current mode's state
+  currentDifficulty = mode;
+  loadModeState(mode); // Load new mode's state
+  updateDifficultyUI();
+};
+
+function updateTotalWinsDisplay(userData) {
+  const winsForMode = calculateWinsForMode(currentDifficulty, userData);
+  const modeLabel = currentDifficulty.charAt(0).toUpperCase() + currentDifficulty.slice(1);
+  totalWinsDisplay.textContent = `${modeLabel} Wins: ${winsForMode}`;
+}
+
+function calculateWinsForMode(mode, userData) {
+  if (!userData.matchHistory || userData.matchHistory.length === 0) return 0;
+  
+  return userData.matchHistory.filter(match => {
+    return match.result === 'WIN' && match.difficulty === mode;
+  }).length;
+}
+
+function updateDifficultyUI() {
+  document.querySelectorAll('.difficulty-btn').forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.dataset.difficulty === currentDifficulty) {
+      btn.classList.add('active');
+    }
+  });
+  
+  // Update total wins display for the new mode
+  if (currentUserRef) {
+    getDoc(currentUserRef).then(docSnap => {
+      if (docSnap.exists()) {
+        updateTotalWinsDisplay(docSnap.data());
+      }
+    });
+  }
+}
+
+function getComputerChoice(playerChoice) {
+  if (currentDifficulty === 'normal') {
+    // Pure random for normal mode
+    return choices[Math.floor(Math.random() * choices.length)];
+  }
+
+  // Determine what beats the player
+  let winningChoice;
+  if (playerChoice === 'rock') winningChoice = 'paper';
+  else if (playerChoice === 'paper') winningChoice = 'scissors';
+  else if (playerChoice === 'scissors') winningChoice = 'rock';
+
+  if (currentDifficulty === 'moderate') {
+    // 60% chance AI wins in moderate mode
+    return Math.random() < 0.6 ? winningChoice : choices[Math.floor(Math.random() * choices.length)];
+  }
+
+  if (currentDifficulty === 'hard') {
+    // 80% chance AI wins in hard mode
+    return Math.random() < 0.8 ? winningChoice : choices[Math.floor(Math.random() * choices.length)];
+  }
+
+  return choices[Math.floor(Math.random() * choices.length)];
+}
 
 function playSfx(type) {
   if (!soundEnabled) return;
@@ -127,7 +272,7 @@ window.playGame = function playGame(playerChoice) {
 
   setTimeout(() => {
     if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) resultDisplay.classList.remove('shaking');
-    const computerChoice = choices[Math.floor(Math.random() * choices.length)];
+    const computerChoice = getComputerChoice(playerChoice);
     let result;
 
     if (playerChoice === computerChoice) { result = "IT'S A TIE!"; winStreak = 0; }
@@ -150,6 +295,7 @@ window.playGame = function playGame(playerChoice) {
     } else { winStreak = 0; }
 
     updateStreakUI();
+    saveModeState(); // Save state after round
     checkIntensity();
     checkMatchWinner();
     if (!isGameOver) toggleButtons(false);
@@ -185,7 +331,8 @@ async function checkMatchWinner() {
               date: new Date().toISOString(),
               result: result,
               playerScore: playerScore,
-              computerScore: computerScore
+              computerScore: computerScore,
+              difficulty: currentDifficulty
             };
             
             // Update user stats and match history
@@ -205,6 +352,15 @@ async function checkMatchWinner() {
     
     resetBtn.style.display = 'block';
     toggleButtons(true);
+    
+    // Reset this mode's state after match ends
+    modeState[currentDifficulty] = {
+      playerScore: 0,
+      computerScore: 0,
+      winStreak: 0,
+      isGameOver: false
+    };
+    saveModeStatesToStorage();
   }
 }
 
@@ -218,6 +374,15 @@ window.resetGame = function resetGame() {
   playerDisplay.textContent = 'PLAYER: —'; computerDisplay.textContent = 'COMPUTER: —';
   document.body.classList.remove('match-point-active');
   resetBtn.style.display = 'none'; toggleButtons(false);
+  
+  // Save the reset state for this mode
+  modeState[currentDifficulty] = {
+    playerScore: 0,
+    computerScore: 0,
+    winStreak: 0,
+    isGameOver: false
+  };
+  saveModeStatesToStorage();
 }
 
 // Modal A11y
