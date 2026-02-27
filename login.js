@@ -107,3 +107,4 @@ window.logout = async function() {
     }
     window.location.href = 'index.html';
 };
+
