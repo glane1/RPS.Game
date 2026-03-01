@@ -17,10 +17,11 @@ body.dark-mode {
     --card-bg: #1e1e2e;
     --text-main: #f8f9fa;
     --text-sub: #b0b0b0;
-    --input-border: #333;
+    --input-border: #555;
     --input-focus: #667eea;
     --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
     --shadow-md: 0 8px 20px rgba(102, 126, 234, 0.1);
+    --placeholder: #aaa;
 }
 
 body.dark-mode .welcome-header h1,
@@ -75,10 +76,29 @@ body {
     z-index: 100;
     transition: all 0.3s ease;
 }
+.dark-mode .theme-toggle {
+    background: #2a2a35;
+    color: #f8f9fa;
+    border-color: #444;
+}
+
+.theme-icon {
+    width: 1.2em;
+    height: 1.2em;
+    vertical-align: middle;
+    margin-right: 6px;
+    color: var(--primary);
+    transition: transform 0.3s;
+}
 
 .theme-toggle:hover {
-    transform: translateY(-2px);
+    transform: translateY(-2px) rotate(5deg);
     box-shadow: 0 12px 24px rgba(102, 126, 234, 0.2);
+}
+
+.theme-toggle:active {
+    transform: translateY(0) rotate(0);
+    box-shadow: var(--shadow-md);
 }
 
 .card-container {
@@ -101,6 +121,7 @@ body {
     box-shadow: var(--shadow-lg);
     width: 100%;
     text-align: center;
+    border: 1px solid rgba(0,0,0,0.05);
     transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
         transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
         visibility 0.5s, box-shadow 0.3s ease;
@@ -207,6 +228,83 @@ h2 {
     text-align: left;
 }
 
+/* inline info or suggestion text under input fields */
+.suggestion-msg {
+    font-size: 0.85rem;
+    color: #d62828; /* red so it stands out */
+    margin-top: 4px;
+    min-height: 1em;
+    line-height: 1.2;
+    text-align: left;
+}
+
+/* suggestion chips container and items */
+.suggestions {
+    margin-top: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.suggestion-chip {
+    background: var(--primary);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.dark-mode .suggestion-chip {
+    background: #889cff;
+    color: #1e1e2e;
+}
+
+.suggestion-chip:hover {
+    background: var(--primary-dark);
+}
+
+.suggestion-chip {
+    background: var(--primary);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.suggestion-chip:hover {
+    background: var(--primary-dark);
+}
+
+/* subtle focus border on invalid input */
+input.invalid {
+    border-color: #d62828 !important;
+}
+
+/* button loading state */
+button.loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.7;
+}
+button.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 18px;
+    height: 18px;
+    margin: -9px 0 0 -9px;
+    border: 3px solid #fff;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
 label {
     display: block;
     font-size: 13px;
@@ -233,6 +331,16 @@ input[type="password"] {
     -moz-appearance: none;
     appearance: none;
 }
+.dark-mode input[type="text"],
+.dark-mode input[type="password"] {
+    border-color: #555;
+    color: #f8f9fa;
+}
+
+input::placeholder {
+    color: var(--placeholder, #aaa);
+}
+
 
 input[type="text"]:hover:not(:focus),
 input[type="password"]:hover:not(:focus) {
