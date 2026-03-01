@@ -81,6 +81,11 @@ let soundEnabled = localStorage.getItem('rps_sound') === 'true';
 totalWinsDisplay.textContent = `Legendary Wins: 0`;
 soundToggle.setAttribute('aria-pressed', String(!!soundEnabled));
 
+// Initialize visual state
+if (soundEnabled) {
+  soundToggle.classList.add('active');
+}
+
 // --- MODE STATE PERSISTENCE FUNCTIONS ---
 
 // Load mode states from localStorage
@@ -404,6 +409,15 @@ document.addEventListener('keydown', e => {
   }
 });
 
-soundToggle.addEventListener('click', () => { soundEnabled = !soundEnabled; localStorage.setItem('rps_sound', soundEnabled); soundToggle.setAttribute('aria-pressed', String(soundEnabled)); });
-
-// functions are attached to window where defined to avoid redeclaration errors
+soundToggle.addEventListener('click', () => { 
+  soundEnabled = !soundEnabled; 
+  localStorage.setItem('rps_sound', soundEnabled); 
+  soundToggle.setAttribute('aria-pressed', String(soundEnabled));
+  
+  // Add visual feedback
+  if (soundEnabled) {
+    soundToggle.classList.add('active'); // or 'enabled'
+  } else {
+    soundToggle.classList.remove('active');
+  }
+});
