@@ -749,3 +749,17 @@ body.match-point-active {
     order: -1;
   }
 }
+
+#soundToggle {
+  /* Default disabled state */
+  background-color: #ccc;
+  color: #666;
+  opacity: 0.6;
+}
+
+#soundToggle.active {
+  /* Enabled state */
+  background-color: #4CAF50; /* or your primary color */
+  color: white;
+  opacity: 1;
+}
