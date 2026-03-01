@@ -41,28 +41,6 @@ function togglePassword(id, cb) {
     document.getElementById(id).type = cb.checked ? "text" : "password";
 }
 
-function updateThemeIcon() {
-    const icon = document.getElementById('theme-icon');
-    if (!icon) return;
-    // sun path and moon path
-    const moonPath = 'M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z';
-    const sunPath = 'M12 3v2m0 14v2m9-9h-2M5 12H3m15.36 6.36l-1.42-1.42M6.66 6.66L5.24 5.24m12.02 0l-1.42 1.42M6.66 17.34l-1.42 1.42M12 7a5 5 0 100 10 5 5 0 000-10z';
-    const isDark = document.body.classList.contains('dark-mode');
-    if (isDark) {
-        icon.innerHTML = `<path d="${sunPath}" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
-    } else {
-        icon.innerHTML = `<path d="${moonPath}" fill="currentColor"/>`;
-    }
-}
-
-function toggleTheme() {
-    document.body.classList.toggle('dark-mode');
-    updateThemeIcon();
-}
-
-// set initial icon once DOM is ready
-document.addEventListener('DOMContentLoaded', updateThemeIcon);
-
 // Helper: generate simple username suggestions (numbers appended)
 // (used when a desired name is already taken)
 function generateSuggestions(username, count = 2) {
@@ -264,7 +242,6 @@ window.clearAllInputs = clearAllInputs;
 window.navToLogin = navToLogin;
 window.navToRegister = navToRegister;
 window.togglePassword = togglePassword;
-window.toggleTheme = toggleTheme;
 
 // Provide a logout helper that uses firebase signOut if available
 window.logout = async function() {
