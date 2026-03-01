@@ -240,7 +240,22 @@ document.getElementById('login-btn').addEventListener('click', async () => {
         await signInWithEmailAndPassword(window.auth, email, password);
         window.location.href = "game.html";
     } catch (error) {
-        alert("Login failed: " + error.message);
+        // give a clearer message depending on the Firebase auth error code
+        if (error && error.code) {
+            switch (error.code) {
+                case 'auth/wrong-password':
+                case 'auth/invalid-credential':
+                    alert('Incorrect password. Please try again.');
+                    break;
+                case 'auth/user-not-found':
+                    alert('No account found with that username.');
+                    break;
+                default:
+                    alert('Login failed: ' + error.message);
+            }
+        } else {
+            alert('Login failed: ' + error.message);
+        }
     }
 });
 
