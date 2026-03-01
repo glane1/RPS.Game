@@ -13,24 +13,6 @@
     --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
-body.dark-mode {
-    --card-bg: #1e1e2e;
-    --text-main: #f8f9fa;
-    --text-sub: #b0b0b0;
-    --input-border: #555;
-    --input-focus: #667eea;
-    --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    --shadow-md: 0 8px 20px rgba(102, 126, 234, 0.1);
-    --placeholder: #aaa;
-}
-
-body.dark-mode .welcome-header h1,
-body.dark-mode .welcome-header h2,
-body.dark-mode .welcome-header p {
-    color: var(--text-main);
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
 * {
     box-sizing: border-box;
     margin: 0;
@@ -58,47 +40,6 @@ body {
     overflow-y: auto;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-}
-
-.theme-toggle {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    cursor: pointer;
-    background: var(--card-bg);
-    padding: 10px 16px;
-    border-radius: 30px;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-main);
-    border: 2px solid transparent;
-    box-shadow: var(--shadow-md);
-    z-index: 100;
-    transition: all 0.3s ease;
-}
-.dark-mode .theme-toggle {
-    background: #2a2a35;
-    color: #f8f9fa;
-    border-color: #444;
-}
-
-.theme-icon {
-    width: 1.2em;
-    height: 1.2em;
-    vertical-align: middle;
-    margin-right: 6px;
-    color: var(--primary);
-    transition: transform 0.3s;
-}
-
-.theme-toggle:hover {
-    transform: translateY(-2px) rotate(5deg);
-    box-shadow: 0 12px 24px rgba(102, 126, 234, 0.2);
-}
-
-.theme-toggle:active {
-    transform: translateY(0) rotate(0);
-    box-shadow: var(--shadow-md);
 }
 
 .card-container {
@@ -254,11 +195,6 @@ h2 {
     cursor: pointer;
     transition: background 0.2s;
 }
-.dark-mode .suggestion-chip {
-    background: #889cff;
-    color: #1e1e2e;
-}
-
 .suggestion-chip:hover {
     background: var(--primary-dark);
 }
@@ -330,11 +266,6 @@ input[type="password"] {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-}
-.dark-mode input[type="text"],
-.dark-mode input[type="password"] {
-    border-color: #555;
-    color: #f8f9fa;
 }
 
 input::placeholder {
@@ -552,15 +483,6 @@ button:disabled {
         font-size: 22px;
         margin-bottom: 12px;
     }
-
-    .theme-toggle {
-        position: fixed;
-        top: 8px;
-        right: 8px;
-        padding: 6px 10px;
-        font-size: 11px;
-        border-radius: 20px;
-    }
 }
 
 /* Small Phones (360px - 480px) */
@@ -681,15 +603,6 @@ button:disabled {
         font-size: 24px;
         margin-bottom: 14px;
     }
-
-    .theme-toggle {
-        position: fixed;
-        top: 10px;
-        right: 10px;
-        padding: 7px 11px;
-        font-size: 12px;
-        border-radius: 20px;
-    }
 }
 
 /* Medium Phones (481px - 600px) */
@@ -787,14 +700,6 @@ button:disabled {
         font-size: 25px;
         margin-bottom: 15px;
     }
-
-    .theme-toggle {
-        position: fixed;
-        top: 12px;
-        right: 12px;
-        padding: 8px 12px;
-        font-size: 12px;
-    }
 }
 
 /* Tablets and Small Desktops (601px - 900px) */
@@ -838,13 +743,6 @@ button:disabled {
     .card-container {
         min-height: auto;
         max-width: 400px;
-    }
-
-    .theme-toggle {
-        top: 16px;
-        right: 16px;
-        padding: 8px 14px;
-        font-size: 13px;
     }
 
     input[type="text"],
