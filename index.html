@@ -15,11 +15,16 @@
 
 <body>
 
-    <div class="theme-toggle" onclick="toggleTheme()">🌓 Theme</div>
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <svg id="theme-icon" class="theme-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" fill="currentColor"/>
+        </svg>
+        <span>Theme</span>
+    </div>
 
     <!-- moved welcome header out of card-container to avoid stacking/visibility issues -->
     <div class="welcome-header">
-        <h1>🪨 📄 ✂️</h1>
+        <h1>👊 🖐️ ✌️</h1>
         <h2 class="game-title">Bato-Bato Pick Arena</h2>
         <p>The ultimate online Rock-Paper-Scissors challenge!</p>
     </div>
@@ -33,6 +38,9 @@
             <div class="input-group">
                 <label for="reg-user">Username</label>
                 <input type="text" id="reg-user" placeholder="Enter username" autocomplete="off">
+                <p id="username-msg" class="suggestion-msg" style="display:none;"></p>
+                <!-- suggestion chips will appear here when a name is taken -->
+                <div id="username-suggestions" class="suggestions" style="display:none;"></div>
             </div>
 
             <div class="input-group">
